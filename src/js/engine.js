@@ -8,16 +8,23 @@ const buttons = {
 
 const sounds = {
     red: new Audio('./src/sound/red.wav'),
-    green: new Audio('./src/sound/red.wav'),
-    blue: new Audio('./src/sound/red.wav'),
-    yellow: new Audio('./src/sound/red.wav'),
+    green: new Audio('./src/sound/green.wav'),
+    blue: new Audio('./src/sound/blue.wav'),
+    yellow: new Audio('./src/sound/yellow.wav'),
     wrong: new Audio('./src/sound/wrong.wav'), // Som de erro
-    start: new Audio('./src/sound/start.mp3') // Som de acerto (opcional)    
-  };
+    start: new Audio('./src/sound/start.mp3') // Som de acerto (opcional)  
 
-  const startBtn = document.getElementById('start-btn');
+};
+
+
+
+
+const startBtn = document.getElementById('start-btn');
 const messageElement = document.getElementById('message');
 const scoreElement = document.getElementById('score');
+
+
+
 
 let sequence = [];
 let playerSequence = [];
@@ -55,7 +62,7 @@ function showSequence(index) {
     if (index < sequence.length) {
         const color = sequence[index];
         const button = buttons[color];
-        
+
         button.classList.add('active');
         setTimeout(() => {
             button.classList.remove('active');
@@ -79,30 +86,31 @@ function playerClick(color) {
     const sound = sounds[color];
     sound.src = `./src/sound/${color}.wav`;
     sound.currentTime = 0;
-    sound.volume = 0.5;
     sound.play();
-    
+
 
     setTimeout(() => button.classList.remove('active'), 300);
 
     // Verifica se o jogador está correto
     if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
-        
-        // Reproduz o som de erro        
+
+        // Reproduz o som de erro  
+        sounds.wrong.volume = 0.1;
         sounds.wrong.play();
 
         // Jogador errou, fim de jogo
         messageElement.textContent = `Você errou! Pontuação final: ${score}`;
-        gameInProgress = false;        
-        return;       
+        gameInProgress = false;
+        
+        return;
     }
 
     // Se o jogador completou a sequência corretamente
     if (playerSequence.length === sequence.length) {
-        score++;        
+        score++;
         setTimeout(nextRound, 1000);
     }
-    
+
 }
 
 
