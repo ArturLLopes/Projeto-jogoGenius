@@ -12,27 +12,23 @@ const sounds = {
     blue: new Audio('./src/sound/blue.wav'),
     yellow: new Audio('./src/sound/yellow.wav'),
     wrong: new Audio('./src/sound/wrong.wav'), // Som de erro
-    start: new Audio('./src/sound/start.mp3') // Som de acerto (opcional)  
-
+    start: new Audio('./src/sound/start.mp3') // Som de inicio
 };
 
-
-
+// Cores para cada botão
+const colors = ['green', 'red', 'yellow', 'blue'];
 
 const startBtn = document.getElementById('start-btn');
 const messageElement = document.getElementById('message');
 const scoreElement = document.getElementById('score');
 
 
-
-
 let sequence = [];
 let playerSequence = [];
 let score = 0;
 let gameInProgress = false;
+let speed = 700; // Tempo inicial
 
-// Cores para cada botão
-const colors = ['green', 'red', 'yellow', 'blue'];
 
 // Função para começar um novo jogo
 function startGame() {
@@ -48,6 +44,9 @@ function nextRound() {
     playerSequence = [];
     scoreElement.textContent = score;
     messageElement.textContent = `Pontuação: ${score} - Memória`;
+
+    // Aumenta a dificuldade reduzindo a velocidade
+    speed = Math.max(100, 500 - score * 50);
 
     // Adiciona um novo item à sequência
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
@@ -66,8 +65,14 @@ function showSequence(index) {
         button.classList.add('active');
         setTimeout(() => {
             button.classList.remove('active');
-            setTimeout(() => showSequence(index + 1), 500);
-        }, 500);
+            setTimeout(() => showSequence(index + 1), speed);
+        }, speed);
+
+        const sound = sounds[color];
+        sound.src = `./src/sound/${color}.wav`;
+        sound.currentTime = 0;
+        sound.play();
+        
     } else {
         // Após exibir toda a sequência, permite que o jogador entre com a sequência
         messageElement.textContent = `Sua vez!`;
@@ -85,7 +90,7 @@ function playerClick(color) {
     // Reproduz o som correspondente ao botão clicado
     const sound = sounds[color];
     sound.src = `./src/sound/${color}.wav`;
-    sound.currentTime = 0;
+    sound.currentTime = 0;// Reinicia o som
     sound.play();
 
 
@@ -101,7 +106,7 @@ function playerClick(color) {
         // Jogador errou, fim de jogo
         messageElement.textContent = `Você errou! Pontuação final: ${score}`;
         gameInProgress = false;
-        
+
         return;
     }
 
@@ -113,19 +118,15 @@ function playerClick(color) {
 
 }
 
-
-
 // Adiciona os event listeners aos botões
 buttons.green.addEventListener('click', () => playerClick('green'));
 buttons.red.addEventListener('click', () => playerClick('red'));
 buttons.yellow.addEventListener('click', () => playerClick('yellow'));
 buttons.blue.addEventListener('click', () => playerClick('blue'));
 
-// Inicia o jogo ao carregar a página
-
-startBtn.addEventListener('click', startGame);
-
 //quanto aperta o botao de inicar toque o som de start
 startBtn.addEventListener('click', () => {
     sounds.start.play();
 });
+// Inicia o jogo ao carregar a página
+startBtn.addEventListener('click', startGame);
